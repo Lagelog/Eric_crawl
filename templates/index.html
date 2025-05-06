@@ -1,0 +1,347 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eric爬虫助手</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap">
+    <style>
+        body {
+            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: #f8f9fa;
+            color: #202124;
+        }
+        .header {
+            background-color: #fff;
+            box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+        }
+        .logo {
+            font-size: 22px;
+            font-weight: 500;
+            color: #4285f4;
+        }
+        .container {
+            flex: 1;
+            padding: 32px;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .search-card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .search-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .input-wrapper {
+            position: relative;
+        }
+        .url-input {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 16px;
+            border: 1px solid #dadce0;
+            border-radius: 24px;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .url-input:focus {
+            border-color: #4285f4;
+            box-shadow: 0 0 0 1px #4285f4;
+        }
+        .search-btn {
+            align-self: center;
+            background-color: #4285f4;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .search-btn:hover {
+            background-color: #3b78e7;
+        }
+        .search-btn:disabled {
+            background-color: #dadce0;
+            cursor: not-allowed;
+        }
+        .options-container {
+            margin-top: 16px;
+        }
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            color: #5f6368;
+            cursor: pointer;
+        }
+        .checkbox-label input {
+            margin-right: 8px;
+        }
+        .login-notice {
+            margin-top: 8px;
+            padding: 12px;
+            background-color: #e8f0fe;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #1a73e8;
+            display: none;
+        }
+        .result-card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3);
+            padding: 24px;
+            max-height: 60vh;
+            overflow-y: auto;
+            display: none;
+        }
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #dadce0;
+        }
+        .result-title {
+            font-size: 18px;
+            font-weight: 500;
+            color: #202124;
+            margin: 0;
+        }
+        .download-btn {
+            background-color: #0f9d58;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .download-btn:hover {
+            background-color: #0b8043;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4285f4;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+        .log-messages {
+            margin-top: 16px;
+            padding: 12px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 14px;
+            max-height: 150px;
+            overflow-y: auto;
+            color: #5f6368;
+        }
+        .log-message {
+            margin: 4px 0;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Markdown 样式 */
+        .markdown-content {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+        .markdown-content h1, .markdown-content h2, .markdown-content h3, 
+        .markdown-content h4, .markdown-content h5, .markdown-content h6 {
+            margin-top: 24px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            line-height: 1.25;
+        }
+        .markdown-content h1 { font-size: 2em; padding-bottom: .3em; border-bottom: 1px solid #eaecef; }
+        .markdown-content h2 { font-size: 1.5em; padding-bottom: .3em; border-bottom: 1px solid #eaecef; }
+        .markdown-content p { margin-top: 0; margin-bottom: 16px; }
+        .markdown-content code { padding: .2em .4em; background-color: rgba(27,31,35,.05); border-radius: 3px; }
+        .markdown-content pre { padding: 16px; overflow: auto; background-color: #f6f8fa; border-radius: 3px; }
+        .markdown-content blockquote { padding: 0 1em; color: #6a737d; border-left: .25em solid #dfe2e5; }
+        .markdown-content img { max-width: 100%; box-sizing: content-box; }
+        .markdown-content a { color: #0366d6; text-decoration: none; }
+        .markdown-content a:hover { text-decoration: underline; }
+        .markdown-content table { border-spacing: 0; border-collapse: collapse; }
+        .markdown-content table th, .markdown-content table td { padding: 6px 13px; border: 1px solid #dfe2e5; }
+        .markdown-content table tr { background-color: #fff; border-top: 1px solid #c6cbd1; }
+        .markdown-content table tr:nth-child(2n) { background-color: #f6f8fa; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">欢迎使用Eric爬虫助手</div>
+    </div>
+    <div class="container">
+        <div class="search-card">
+            <form class="search-form" id="crawlForm">
+                <div class="input-wrapper">
+                    <input type="url" id="urlInput" class="url-input" placeholder="请输入要爬取的网址 (例如: https://www.example.com)" required>
+                </div>
+                <div class="options-container">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="needLoginCheck"> 需要登录(淘宝、京东等)
+                    </label>
+                    <div class="login-notice" id="loginNotice">
+                        勾选此选项后，将会打开浏览器供您手动登录。完成登录后，请回到控制台按回车键继续爬取过程。
+                    </div>
+                </div>
+                <button type="submit" class="search-btn" id="searchBtn">开始爬取</button>
+            </form>
+        </div>
+        
+        <div class="loading" id="loadingSection">
+            <div class="loading-spinner"></div>
+            <div>正在爬取数据，请稍候...</div>
+            <div class="log-messages" id="logMessages"></div>
+        </div>
+        
+        <div class="result-card" id="resultCard">
+            <div class="result-header">
+                <h2 class="result-title">爬取结果</h2>
+                <a href="#" class="download-btn" id="downloadBtn">下载 Markdown</a>
+            </div>
+            <div class="markdown-content" id="resultContent"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('crawlForm');
+            const urlInput = document.getElementById('urlInput');
+            const needLoginCheck = document.getElementById('needLoginCheck');
+            const loginNotice = document.getElementById('loginNotice');
+            const searchBtn = document.getElementById('searchBtn');
+            const loadingSection = document.getElementById('loadingSection');
+            const resultCard = document.getElementById('resultCard');
+            const resultContent = document.getElementById('resultContent');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const logMessages = document.getElementById('logMessages');
+            
+            let logEventSource = null;
+            
+            // 显示/隐藏登录提示
+            needLoginCheck.addEventListener('change', function() {
+                loginNotice.style.display = this.checked ? 'block' : 'none';
+            });
+            
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const url = urlInput.value.trim();
+                const needLogin = needLoginCheck.checked;
+                
+                if (!url) return;
+                
+                // 重置界面
+                resultCard.style.display = 'none';
+                resultContent.innerHTML = '';
+                logMessages.innerHTML = '';
+                
+                // 显示加载状态
+                searchBtn.disabled = true;
+                loadingSection.style.display = 'block';
+                
+                // 连接日志流
+                if (logEventSource) {
+                    logEventSource.close();
+                }
+                
+                logEventSource = new EventSource('/log-stream');
+                logEventSource.onmessage = function(event) {
+                    const message = document.createElement('div');
+                    message.className = 'log-message';
+                    message.textContent = event.data;
+                    logMessages.appendChild(message);
+                    logMessages.scrollTop = logMessages.scrollHeight;
+                };
+                
+                // 发送爬取请求
+                fetch('/crawl', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        url: url,
+                        need_login: needLogin
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // 关闭日志流
+                    if (logEventSource) {
+                        logEventSource.close();
+                        logEventSource = null;
+                    }
+                    
+                    // 隐藏加载状态
+                    searchBtn.disabled = false;
+                    loadingSection.style.display = 'none';
+                    
+                    if (data.success) {
+                        // 显示结果
+                        resultContent.innerHTML = data.html;
+                        resultCard.style.display = 'block';
+                        
+                        // 更新下载链接
+                        downloadBtn.href = `/download/${data.filename}`;
+                    } else {
+                        alert('爬取失败: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    // 关闭日志流
+                    if (logEventSource) {
+                        logEventSource.close();
+                        logEventSource = null;
+                    }
+                    
+                    searchBtn.disabled = false;
+                    loadingSection.style.display = 'none';
+                    alert('请求出错: ' + error);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
