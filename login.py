@@ -19,15 +19,32 @@ def get_executable_path():
     
     # 用户本地已安装的浏览器优先级列表
     if system == 'Windows':
+        # 扩展Windows上可能的Chrome安装路径
         paths = [
             r"C:\Program Files\Google\Chrome\Application\chrome.exe",
             r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
+            # 用户目录下可能的Chrome安装路径
+            os.path.join(os.environ.get('LOCALAPPDATA', ''), r"Google\Chrome\Application\chrome.exe"),
+            os.path.join(os.environ.get('PROGRAMFILES', ''), r"Google\Chrome\Application\chrome.exe"),
+            os.path.join(os.environ.get('PROGRAMFILES(X86)', ''), r"Google\Chrome\Application\chrome.exe"),
+            # 其他常见浏览器
+            r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
+            r"C:\Program Files\Microsoft\Edge\Application\msedge.exe",
             r"C:\Program Files (x86)\Tencent\QQBrowser\QQBrowser.exe",
-            r"C:\Users\HS\AppData\Local\Microsoft\WindowsApps\MicrosoftEdge.exe",
+            r"C:\Program Files\Tencent\QQBrowser\QQBrowser.exe",
             # 可能的Chromium下载位置
-            str(Path.home() / "AppData" / "Local" / "pyppeteer" / "pyppeteer" / "local-chromium"),
-            str(Path.home() / ".local" / "share" / "pyppeteer" / "local-chromium"),
+            str(Path.home() / "AppData" / "Local" / "pyppeteer" / "pyppeteer" / "local-chromium" / "chrome-win" / "chrome.exe"),
+            str(Path.home() / ".local" / "share" / "pyppeteer" / "local-chromium" / "chrome-win" / "chrome.exe"),
         ]
+        
+        # 添加版本子目录的检查（处理Chrome可能存在的多个版本）
+        chrome_app_path = os.path.join(os.environ.get('LOCALAPPDATA', ''), r"Google\Chrome\Application")
+        if os.path.exists(chrome_app_path):
+            # 列出Application目录下所有可能的版本子目录
+            for item in os.listdir(chrome_app_path):
+                version_path = os.path.join(chrome_app_path, item, "chrome.exe")
+                if os.path.isfile(version_path):
+                    paths.insert(0, version_path)  # 添加到列表最前面（优先级更高）
     elif system == 'Darwin':  # macOS
         paths = [
             '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
@@ -42,19 +59,15 @@ def get_executable_path():
             str(Path.home() / ".local" / "share" / "pyppeteer" / "local-chromium"),
         ]
     
-    # 检查可执行文件是否存在
+    # 检查每个路径是否存在
     for path in paths:
-        if os.path.exists(path):
-            if os.path.isdir(path):  # 如果是目录，可能是Chromium解压目录
-                # 寻找目录中的可执行文件
-                for root, dirs, files in os.walk(path):
-                    for file in files:
-                        if file.lower() in ('chrome.exe', 'chromium.exe', 'chrome', 'chromium'):
-                            return os.path.join(root, file)
-            else:  # 直接是可执行文件
-                return path
+        if os.path.exists(path) and os.path.isfile(path):
+            print(f"找到浏览器路径: {path}")
+            return path
     
-    return None  # 未找到可用的浏览器
+    # 如果找不到任何浏览器路径，则返回None
+    print("未找到任何可用的Chrome/Chromium浏览器路径")
+    return None
 
 
 # 扩展用户代理池

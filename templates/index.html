@@ -205,6 +205,43 @@
         .markdown-content table th, .markdown-content table td { padding: 6px 13px; border: 1px solid #dfe2e5; }
         .markdown-content table tr { background-color: #fff; border-top: 1px solid #c6cbd1; }
         .markdown-content table tr:nth-child(2n) { background-color: #f6f8fa; }
+        
+        /* Iframe内容的样式 */
+        .iframe-content {
+            margin-top: 30px;
+            border-top: 1px solid #e1e4e8;
+            padding-top: 20px;
+        }
+        .iframe-item {
+            background-color: #f8f9fa;
+            border: 1px solid #e1e4e8;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            padding: 15px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .iframe-item h3 {
+            color: #0366d6;
+            margin-top: 0;
+            border-bottom: 1px solid #e1e4e8;
+            padding-bottom: 8px;
+        }
+        .iframe-content-area, .iframe-extracted-content {
+            background-color: white;
+            border: 1px solid #e1e4e8;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .iframe-extracted-content p {
+            margin: 8px 0;
+        }
+        .iframe-item img {
+            max-width: 100%;
+            height: auto;
+        }
     </style>
 </head>
 <body>
@@ -320,11 +357,21 @@
                     
                     if (data.success) {
                         // 显示结果
-                        resultContent.innerHTML = data.html;
-                        resultCard.style.display = 'block';
-                        
-                        // 更新下载链接
-                        downloadBtn.href = `/download/${data.filename}`;
+                        if (data.html) {
+                            resultContent.innerHTML = data.html;
+                            resultCard.style.display = 'block';
+                            
+                            // 更新下载链接
+                            downloadBtn.href = `/download/${data.filename}`;
+                        } else if (data.markdown) {
+                            resultContent.innerHTML = data.markdown;
+                            resultCard.style.display = 'block';
+                            
+                            // 更新下载链接
+                            downloadBtn.href = `/download/${data.filename}`;
+                        } else {
+                            alert('爬取结果中没有有效的HTML或Markdown内容');
+                        }
                     } else {
                         alert('爬取失败: ' + data.error);
                     }
