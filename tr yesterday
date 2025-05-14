@@ -1,0 +1,28 @@
+[33mcommit fab20fbaca86e07f13ff831a3945ac1c8cc6bbad[m[33m ([m[1;32mmain[m[33m)[m
+Author: Lagelog <pehanchen@gmail.com>
+Date:   Tue May 6 15:19:06 2025 +0800
+
+            new file:   .idea/.gitignore
+            new file:   .idea/crawl4ai.iml
+            new file:   .idea/inspectionProfiles/profiles_settings.xml
+            new file:   .idea/misc.xml
+            new file:   .idea/modules.xml
+            new file:   __pycache__/login.cpython-312.pyc
+            new file:   __pycache__/login.cpython-313.pyc
+            new file:   app.py
+            new file:   downloads/n8n_io_20250505_161432.md
+            new file:   downloads/s_taobao_com_20250505_161257.md
+            new file:   downloads/www_deepseek_com_20250506_091126.md
+            new file:   downloads/www_pinduoduo_com_20250506_131124.md
+            new file:   downloads/www_taobao_com_20250505_161121.md
+            new file:   downloads/www_taobao_com_20250505_162245.md
+            new file:   downloads/www_taobao_com_20250505_162348.md
+            new file:   downloads/www_taobao_com_20250505_163522.md
+            new file:   downloads/www_taobao_com_20250505_163957.md
+            new file:   downloads/www_xiaohongshu_com_20250505_161203.md
+            new file:   login.py
+            new file:   login_test.py
+            new file:   main.py
+            new file:   static/style.css
+            new file:   templates/index.html
+            new file:   test.py

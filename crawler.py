@@ -11,7 +11,8 @@ from config import (
 )
 from logger import add_log_message
 from utils import async_delay
-from login import AsyncWebCrawler, get_random_user_agent, get_random_headers, get_executable_path
+from crawl4ai import AsyncWebCrawler
+from login import get_random_user_agent, get_random_headers, get_executable_path
 
 class WebCrawler:
     def __init__(self):
